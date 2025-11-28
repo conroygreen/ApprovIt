@@ -92,26 +92,51 @@ function setupEventListeners() {
     });
 }
 
+// Sanitize a value for use in CSS class names (only allow alphanumeric and hyphens)
+function sanitizeForCssClass(value) {
+    return String(value).toLowerCase().replace(/[^a-z0-9-]/g, '');
+}
+
 // Render approval list
 function renderApprovals() {
     approvalList.innerHTML = approvals.map(approval => `
-        <div class="approval-item" data-id="${approval.id}">
+        <div class="approval-item" data-id="${Number(approval.id)}">
             <div class="approval-info">
                 <h4>${escapeHtml(approval.title)}</h4>
                 <p>${escapeHtml(approval.department)} • ${formatDate(approval.date)}</p>
             </div>
             <div class="approval-meta">
-                <span class="priority-badge priority-${approval.priority.toLowerCase()}">${escapeHtml(approval.priority)}</span>
-                <span class="status-badge status-${approval.status}">${getStatusLabel(approval.status)}</span>
+                <span class="priority-badge priority-${sanitizeForCssClass(approval.priority)}">${escapeHtml(approval.priority)}</span>
+                <span class="status-badge status-${sanitizeForCssClass(approval.status)}">${getStatusLabel(approval.status)}</span>
                 ${approval.status === 'pending' || approval.status === 'review' ? `
                     <div class="approval-actions">
-                        <button class="btn btn-approve" onclick="handleApprove(${approval.id})">Approve</button>
-                        <button class="btn btn-reject" onclick="handleReject(${approval.id})">Reject</button>
+                        <button class="btn btn-approve" data-action="approve" data-id="${Number(approval.id)}">Approve</button>
+                        <button class="btn btn-reject" data-action="reject" data-id="${Number(approval.id)}">Reject</button>
                     </div>
                 ` : ''}
             </div>
         </div>
     `).join('');
+
+    // Attach event listeners using event delegation
+    setupApprovalActions();
+}
+
+// Setup event delegation for approval actions
+function setupApprovalActions() {
+    approvalList.querySelectorAll('[data-action="approve"]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = Number(this.dataset.id);
+            handleApprove(id);
+        });
+    });
+
+    approvalList.querySelectorAll('[data-action="reject"]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = Number(this.dataset.id);
+            handleReject(id);
+        });
+    });
 }
 
 // Update dashboard statistics
