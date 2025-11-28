@@ -1,0 +1,23 @@
+{
+  "name": "approvit",
+  "version": "1.0.0",
+  "description": "Regulatory approval SaaS - Plan drawing upload with map integration for municipality approval",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js"
+  },
+  "keywords": [
+    "municipality",
+    "approval",
+    "plan-drawings",
+    "gps",
+    "map"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "multer": "^2.0.2"
+  }
+}
