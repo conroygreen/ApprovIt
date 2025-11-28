@@ -7,6 +7,9 @@ const rateLimit = require('express-rate-limit');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Load municipalities data
+const municipalitiesData = require('../data/municipalities.json');
+
 // Rate limiting configuration
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -104,6 +107,11 @@ app.post('/api/upload', upload.array('planDrawings', 10), (req, res) => {
     message: 'Files uploaded successfully',
     files: fileInfos
   });
+});
+
+// Get municipalities
+app.get('/api/municipalities', (req, res) => {
+  res.json(municipalitiesData);
 });
 
 // Get uploaded files

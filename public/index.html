@@ -195,7 +195,8 @@
       margin-bottom: 8px;
     }
 
-    .form-group input {
+    .form-group input,
+    .form-group select {
       padding: 12px 15px;
       border: 2px solid #e0e0e0;
       border-radius: 8px;
@@ -203,9 +204,39 @@
       transition: border-color 0.3s;
     }
 
-    .form-group input:focus {
+    .form-group input:focus,
+    .form-group select:focus {
       outline: none;
       border-color: #667eea;
+    }
+
+    .municipality-info {
+      background: #e8f4fd;
+      border: 1px solid #b8daff;
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .municipality-info.show {
+      display: block;
+    }
+
+    .municipality-info h4 {
+      color: #004085;
+      margin-bottom: 10px;
+      font-size: 1rem;
+    }
+
+    .municipality-info p {
+      color: #0056b3;
+      margin: 5px 0;
+      font-size: 0.9rem;
+    }
+
+    .municipality-info p strong {
+      color: #004085;
     }
 
     #map {
@@ -386,6 +417,26 @@
       </div>
     </div>
 
+    <!-- Municipality Selection Section -->
+    <div class="card">
+      <h2>🏛️ Select Municipality</h2>
+      <div class="project-details">
+        <div class="form-group">
+          <label for="municipality">Target Municipality</label>
+          <select id="municipality">
+            <option value="">-- Select a Municipality --</option>
+          </select>
+        </div>
+        <div id="municipalityInfo" class="municipality-info">
+          <h4>📋 Municipality Contact Information</h4>
+          <p><strong>Address:</strong> <span id="munAddress">-</span></p>
+          <p><strong>Phone:</strong> <span id="munPhone">-</span></p>
+          <p><strong>Email:</strong> <span id="munEmail">-</span></p>
+          <p><strong>Parish:</strong> <span id="munParish">-</span></p>
+        </div>
+      </div>
+    </div>
+
     <!-- Project Details Section -->
     <div class="card">
       <h2>📝 Project Details</h2>
@@ -425,6 +476,10 @@
         
         <div class="site-info">
           <div class="info-item">
+            <label>Target Municipality</label>
+            <span id="previewMunicipality">-</span>
+          </div>
+          <div class="info-item">
             <label>Project Name</label>
             <span id="previewProjectName">-</span>
           </div>
@@ -439,6 +494,10 @@
           <div class="info-item">
             <label>GPS Coordinates</label>
             <span id="previewCoords">-</span>
+          </div>
+          <div class="info-item">
+            <label>Parish</label>
+            <span id="previewParish">-</span>
           </div>
         </div>
         
@@ -465,23 +524,35 @@
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
     crossorigin=""></script>
   <script>
-    // Initialize map with a default view (Cape Town, South Africa as example)
-    let map = L.map('map').setView([-33.9249, 18.4241], 13);
+    // Initialize variables
+    let map = null;
     let marker = null;
     let selectedLat = null;
     let selectedLng = null;
+    let municipalities = [];
+    let selectedMunicipality = null;
 
-    // Add OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
+    // Initialize map with a default view (Jamaica) - wrapped in try-catch for environments where Leaflet is blocked
+    try {
+      if (typeof L !== 'undefined') {
+        map = L.map('map').setView([18.1096, -77.2975], 9);
+        
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
 
-    // Handle map click to set marker
-    map.on('click', function(e) {
-      setMarker(e.latlng.lat, e.latlng.lng);
-    });
+        // Handle map click to set marker
+        map.on('click', function(e) {
+          setMarker(e.latlng.lat, e.latlng.lng);
+        });
+      }
+    } catch (e) {
+      console.warn('Leaflet map initialization failed:', e.message);
+    }
 
     function setMarker(lat, lng) {
+      if (!map || typeof L === 'undefined') return;
       selectedLat = lat;
       selectedLng = lng;
 
@@ -657,6 +728,49 @@
       }
     }
 
+    // Municipality handling
+    function loadMunicipalities() {
+      fetch('/api/municipalities')
+        .then(response => response.json())
+        .then(data => {
+          municipalities = data.municipalities;
+          const select = document.getElementById('municipality');
+          municipalities.forEach((mun, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = mun.name;
+            select.appendChild(option);
+          });
+        })
+        .catch(error => {
+          console.error('Error loading municipalities:', error);
+        });
+    }
+
+    function onMunicipalityChange() {
+      const select = document.getElementById('municipality');
+      const infoDiv = document.getElementById('municipalityInfo');
+      
+      if (select.value === '') {
+        selectedMunicipality = null;
+        infoDiv.classList.remove('show');
+        updatePreview();
+        return;
+      }
+
+      selectedMunicipality = municipalities[parseInt(select.value)];
+      
+      document.getElementById('munAddress').textContent = selectedMunicipality.address || '-';
+      document.getElementById('munPhone').textContent = selectedMunicipality.phone || '-';
+      document.getElementById('munEmail').textContent = selectedMunicipality.email || 
+        (selectedMunicipality.alt_email || 'Not available');
+      document.getElementById('munParish').textContent = 
+        Array.isArray(selectedMunicipality.parish) ? selectedMunicipality.parish.join(', ') : '-';
+      
+      infoDiv.classList.add('show');
+      updatePreview();
+    }
+
     // Preview Updates
     function updatePreview() {
       document.getElementById('previewProjectName').textContent = 
@@ -673,6 +787,15 @@
           `${selectedLat.toFixed(6)}, ${selectedLng.toFixed(6)}`;
       }
 
+      if (selectedMunicipality) {
+        document.getElementById('previewMunicipality').textContent = selectedMunicipality.name;
+        document.getElementById('previewParish').textContent = 
+          Array.isArray(selectedMunicipality.parish) ? selectedMunicipality.parish.join(', ') : '-';
+      } else {
+        document.getElementById('previewMunicipality').textContent = '-';
+        document.getElementById('previewParish').textContent = '-';
+      }
+
       if (uploadedFiles.length > 0) {
         document.getElementById('previewFiles').textContent = 
           uploadedFiles.map(f => f.filename).join(', ');
@@ -683,6 +806,7 @@
     ['projectName', 'applicantName', 'siteAddress', 'signDescription'].forEach(id => {
       document.getElementById(id).addEventListener('input', updatePreview);
     });
+    document.getElementById('municipality').addEventListener('change', onMunicipalityChange);
 
     // Generate Presentation Document
     function generatePresentation() {
@@ -704,6 +828,15 @@
         ? `https://www.google.com/maps?q=${selectedLat},${selectedLng}`
         : 'No location specified';
 
+      // Municipality information
+      const municipalityName = selectedMunicipality ? selectedMunicipality.name : 'Not specified';
+      const municipalityAddress = selectedMunicipality ? (selectedMunicipality.address || 'Not specified') : 'Not specified';
+      const municipalityPhone = selectedMunicipality ? (selectedMunicipality.phone || 'Not specified') : 'Not specified';
+      const municipalityEmail = selectedMunicipality ? 
+        (selectedMunicipality.email || selectedMunicipality.alt_email || 'Not available') : 'Not specified';
+      const municipalityParish = selectedMunicipality && Array.isArray(selectedMunicipality.parish) 
+        ? selectedMunicipality.parish.join(', ') : 'Not specified';
+
       const content = `
 ================================================================================
                     MUNICIPALITY SIGN APPROVAL APPLICATION
@@ -711,6 +844,16 @@
 ================================================================================
 
 Generated: ${new Date().toLocaleString()}
+
+--------------------------------------------------------------------------------
+                            TARGET MUNICIPALITY
+--------------------------------------------------------------------------------
+
+Municipality:     ${municipalityName}
+Parish:           ${municipalityParish}
+Address:          ${municipalityAddress}
+Phone:            ${municipalityPhone}
+Email:            ${municipalityEmail}
 
 --------------------------------------------------------------------------------
                               PROJECT INFORMATION
@@ -767,9 +910,10 @@ for complete application details.
       showStatus('Presentation document generated and downloaded!', 'success');
     }
 
-    // Load existing files on page load
+    // Load existing files and municipalities on page load
     document.addEventListener('DOMContentLoaded', () => {
       loadUploadedFiles();
+      loadMunicipalities();
     });
   </script>
 </body>
