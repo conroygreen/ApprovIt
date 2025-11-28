@@ -2,14 +2,36 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Rate limiting configuration
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: { error: 'Too many requests, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Apply rate limiting to all API routes
+app.use('/api/', apiLimiter);
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, '..', 'public', 'uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+// Sanitize filename to prevent path traversal and special characters
+function sanitizeFilename(filename) {
+  // Get only the base name, removing any path components
+  const baseName = path.basename(filename);
+  // Replace any non-alphanumeric characters (except dots and hyphens) with underscores
+  // This prevents path traversal and special character issues
+  return baseName.replace(/[^a-zA-Z0-9.-]/g, '_');
 }
 
 // Configure multer for file upload
@@ -19,17 +41,29 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + '-' + file.originalname);
+    const sanitizedName = sanitizeFilename(file.originalname);
+    cb(null, uniqueSuffix + '-' + sanitizedName);
   }
 });
 
+// Allowed MIME types for file uploads
+const allowedMimeTypes = [
+  'image/jpeg',
+  'image/jpg', 
+  'image/png',
+  'image/gif',
+  'application/pdf'
+];
+
+// Allowed file extensions
+const allowedExtensions = /\.(jpeg|jpg|png|gif|pdf)$/i;
+
 // File filter to accept only images and PDFs
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png|gif|pdf/;
-  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = allowedTypes.test(file.mimetype);
+  const extValid = allowedExtensions.test(file.originalname.toLowerCase());
+  const mimeValid = allowedMimeTypes.includes(file.mimetype);
   
-  if (extname && mimetype) {
+  if (extValid && mimeValid) {
     return cb(null, true);
   } else {
     cb(new Error('Only images (jpeg, jpg, png, gif) and PDF files are allowed'));
