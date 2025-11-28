@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ApprovIt - Regulatory Approval SaaS Demo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <h1>ApprovIt</h1>
+                <span class="tagline">Regulatory Approval SaaS</span>
+            </div>
+            <nav class="nav">
+                <a href="#dashboard">Dashboard</a>
+                <a href="#approvals">Approvals</a>
+                <a href="#reports">Reports</a>
+                <button class="btn btn-primary" id="loginBtn">Login</button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <h2>Streamline Your Regulatory Approvals</h2>
+                <p>Manage compliance workflows, track approval statuses, and accelerate your regulatory processes with our intelligent platform.</p>
+                <button class="btn btn-primary btn-large" id="startDemoBtn">Start Demo</button>
+            </div>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="dashboard">
+            <div class="container">
+                <h3>Approval Dashboard</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number" id="pendingCount">5</span>
+                        <span class="stat-label">Pending Approvals</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="approvedCount">12</span>
+                        <span class="stat-label">Approved</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="rejectedCount">2</span>
+                        <span class="stat-label">Rejected</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="inReviewCount">3</span>
+                        <span class="stat-label">In Review</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Approvals Section -->
+        <section id="approvals" class="approvals">
+            <div class="container">
+                <div class="section-header">
+                    <h3>Approval Requests</h3>
+                    <button class="btn btn-secondary" id="newRequestBtn">+ New Request</button>
+                </div>
+                <div class="approval-list" id="approvalList">
+                    <!-- Approval items will be rendered here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- New Request Modal -->
+        <div class="modal" id="newRequestModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>Submit New Approval Request</h4>
+                    <button class="modal-close" id="closeModal">&times;</button>
+                </div>
+                <form id="approvalForm">
+                    <div class="form-group">
+                        <label for="requestTitle">Request Title</label>
+                        <input type="text" id="requestTitle" placeholder="Enter request title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="department">Department</label>
+                        <select id="department" required>
+                            <option value="">Select Department</option>
+                            <option value="Quality Assurance">Quality Assurance</option>
+                            <option value="Regulatory Affairs">Regulatory Affairs</option>
+                            <option value="Manufacturing">Manufacturing</option>
+                            <option value="Clinical">Clinical</option>
+                            <option value="Legal">Legal</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="priority">Priority</label>
+                        <select id="priority" required>
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                            <option value="Critical">Critical</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" rows="4" placeholder="Describe the approval request..." required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Submit Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Reports Section -->
+        <section id="reports" class="reports">
+            <div class="container">
+                <h3>Compliance Reports</h3>
+                <div class="reports-grid">
+                    <div class="report-card">
+                        <h4>Monthly Summary</h4>
+                        <p>View approval statistics for the current month</p>
+                        <button class="btn btn-secondary">Generate Report</button>
+                    </div>
+                    <div class="report-card">
+                        <h4>Compliance Audit</h4>
+                        <p>Complete audit trail of all regulatory actions</p>
+                        <button class="btn btn-secondary">Generate Report</button>
+                    </div>
+                    <div class="report-card">
+                        <h4>Department Analysis</h4>
+                        <p>Approval metrics broken down by department</p>
+                        <button class="btn btn-secondary">Generate Report</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 ApprovIt. All rights reserved.</p>
+            <p>Regulatory Approval SaaS Platform</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
