@@ -1,0 +1,104 @@
+{
+  "municipalities": [
+    {
+      "name": "Kingston & St. Andrew Municipal Corporation (KSAMC)",
+      "parish": ["Kingston", "St. Andrew"],
+      "email": "townclerk@ksac.gov.jm",
+      "phone": "876-922-3400",
+      "address": "24 Church Street, Kingston"
+    },
+    {
+      "name": "Portmore Municipal Council",
+      "parish": ["Portmore (St. Catherine)"],
+      "email": "portmoreadmin@mlge.gov.jm",
+      "phone": "876-740-7440",
+      "address": "Municipal Boulevard, Portmore Town Centre, St. Catherine"
+    },
+    {
+      "name": "St. Catherine Municipal Corporation",
+      "parish": ["St. Catherine"],
+      "email": "scpcbuilding@gmail.com",
+      "alt_email": "stcmc.ceo@gmail.com",
+      "phone": "876-984-3111",
+      "address": "Emancipation Square, Spanish Town, St. Catherine"
+    },
+    {
+      "name": "Clarendon Municipal Corporation",
+      "parish": ["Clarendon"],
+      "email": null,
+      "phone": "876-986-2216",
+      "address": "Williams Street, May Pen, Clarendon"
+    },
+    {
+      "name": "Manchester Municipal Corporation",
+      "parish": ["Manchester"],
+      "email": "manchesterpc@mlge.gov.jm",
+      "phone": "876-962-2277",
+      "address": "29 Race Course Road, Mandeville, Manchester"
+    },
+    {
+      "name": "St. Elizabeth Municipal Corporation",
+      "parish": ["St. Elizabeth"],
+      "email": "stelizabethpc@yahoo.com",
+      "phone": "876-965-2276",
+      "address": "Black River, St. Elizabeth"
+    },
+    {
+      "name": "Westmoreland Municipal Corporation",
+      "parish": ["Westmoreland"],
+      "email": null,
+      "phone": "876-955-2653",
+      "address": "Petersfield Road, Savanna-la-Mar, Westmoreland"
+    },
+    {
+      "name": "Hanover Municipal Corporation",
+      "parish": ["Hanover"],
+      "email": null,
+      "phone": "876-956-2272",
+      "address": "Main Street, Lucea, Hanover"
+    },
+    {
+      "name": "St. James Municipal Corporation",
+      "parish": ["St. James"],
+      "email": null,
+      "phone": "876-952-2250",
+      "address": "Montego Bay, St. James"
+    },
+    {
+      "name": "Trelawny Municipal Corporation",
+      "parish": ["Trelawny"],
+      "email": "cgager@trelawnypc.org",
+      "alt_email": "trelawny.council@yahoo.com",
+      "phone": "876-954-3228",
+      "address": "Falmouth, Trelawny"
+    },
+    {
+      "name": "St. Ann Municipal Corporation",
+      "parish": ["St. Ann"],
+      "email": null,
+      "phone": "876-972-2615",
+      "address": "1 Milford Road, St. Ann's Bay, St. Ann"
+    },
+    {
+      "name": "St. Mary Municipal Corporation",
+      "parish": ["St. Mary"],
+      "email": null,
+      "phone": "876-994-2218",
+      "address": "Port Maria, St. Mary"
+    },
+    {
+      "name": "Portland Municipal Corporation",
+      "parish": ["Portland"],
+      "email": null,
+      "phone": "876-993-2643",
+      "address": "Port Antonio, Portland"
+    },
+    {
+      "name": "St. Thomas Municipal Corporation",
+      "parish": ["St. Thomas"],
+      "email": null,
+      "phone": "876-982-2210",
+      "address": "Morant Bay, St. Thomas"
+    }
+  ]
+}
